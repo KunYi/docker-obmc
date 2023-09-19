@@ -1,0 +1,22 @@
+#!/bin/sh
+
+set -e
+
+HOME_DIR="${HOME}"
+REPO_DIR=`realpath ./openbmc`
+MOUNT_DLDIR=""
+EXTRA_BB_ENV_VARS=""
+
+if [ -n "${DL_DIR}" ]; then
+   MOUNT_DLDIR="--volume $(readlink -f "${DL_DIR}"):${HOME_DIR}/downloads:rw --env DL_DIR=${HOME_DIR}/downloads"
+fi
+
+
+docker run --volume ${REPO_DIR}:${HOME_DIR}/openbmc:rw --volume /tmp:/tmp \
+  --workdir=${HOME_DIR}/openbmc $MOUNT_DLDIR} \
+  --env BB_ENV_PASSTHROUGH_ADDITIONS="DL_DIR " \
+  --env TERM=xterm-256color --env SHELL=/bin/bash \
+  --rm --init --tty --interactive \
+  --hostname dockerbmc \
+  obmcbuilder
+
