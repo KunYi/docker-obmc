@@ -7,16 +7,16 @@ ARG userid
 ARG groupid
 ARG username
 
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
 RUN apt-get update && \
     apt-get install -y locales
 
 RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
-ENV LANGUAGE en_US:en
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+ENV LANGUAGE=en_US:en
 
 RUN apt install -yy build-essential chrpath cpio \
         debianutils diffstat file gawk git iputils-ping \
@@ -40,7 +40,7 @@ WORKDIR $HOME
 
 ENV HOME=/home/$username
 ENV USER=$username
+ENV USERNAME=$username
 ENV WORKFOLDER=/home/$username/openbmc
 
-ENTRYPOINT chroot --userspec=$(cat /root/username):$(cat /root/username) / /bin/bash -c "cd $WORKFOLDER && exec /bin/bash -i"
-
+ENTRYPOINT [ "bash", "-c", "chroot --userspec=${USERNAME}:${USERNAME} / /bin/bash -c 'cd ${WORKFOLDER} && exec /bin/bash -i'" ]
